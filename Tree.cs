@@ -40,36 +40,28 @@ class Tree<T> where T : struct
         return ptr.GetValue();
     }
 
-    private Node<T> GetNode(int index, Node<T> startPtr = null, Node<T> parentPtr = null)
+    private Node<T> GetNode(int index)
     {
-        Node<T> ptr;
-        if(startPtr == null)
+        int traverseStep = index;
+        return this.Traverse(this.root, ref traverseStep);
+    }
+
+    private Node<T> Traverse(Node<T> currentNode, ref int traverseStep)
+    {
+        Node<T> ptr = currentNode;
+
+        if(traverseStep > 0 && currentNode.Child() != null)
         {
-            ptr = this.root;
-        }
-        else
-        {
-            ptr = startPtr;
+            traverseStep--;
+            ptr = this.Traverse(currentNode.Child(), ref traverseStep);
         }
 
-        if(index > 0)
+        if(traverseStep > 0 && currentNode.Next() != null)
         {
-            if(ptr.Child() != null)
-            {
-                return this.GetNode(index-1, ptr.Child(), ptr);
-            }
-            else if(ptr.Next() != null)
-            {
-                return this.GetNode(index-1, ptr.Next(), ptr);
-            }
-            else
-            {
-                return this.GetNode(index-1, ptr.Next());
-            }
+            traverseStep--;
+            ptr = this.Traverse(currentNode.Next(), ref traverseStep);
         }
-        else
-        {
-            return ptr;
-        }
+
+        return ptr;
     }
 }
